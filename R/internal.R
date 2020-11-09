@@ -172,7 +172,7 @@ MCBUpperLimitsDesign1 <- function(thetadraws,alpha = 0.05) {
   rank_max <- apply(rank_matrix, 1, max)
 
   # Create sorted log-OR
-  new_dat <- apply(Log_OR_matrix[rank_max, ], 2, sort)
+  new_dat <- apply(Log_OR_matrix[, ], 2, sort)
 
   # Compute 100(1-alpha)% upper quantile
   ranks_quantile <- ceiling(stats::quantile(rank_max, 1 - alpha))
@@ -210,7 +210,7 @@ MCBUpperLimitsGeneral <- function(thetadraws, alpha = 0.05) {
   rank_max <- apply(rank_matrix, 1, max)
 
   # Create sorted log-OR
-  new_dat <- apply(Log_OR_matrix[rank_max, ], 2, sort)
+  new_dat <- apply(Log_OR_matrix[, ], 2, sort)
 
   # Compute 100(1-alpha)% upper quantile
   ranks_quantile <- ceiling(stats::quantile(rank_max, 1 - alpha))
@@ -316,7 +316,7 @@ PowerBayesianDesign1 <- function(sample_size = 100,
       rank_max <- apply(rank_matrix, 1, max)
 
 
-      new_dat <- apply(log_OR_matrix[rank_max, ], 2, sort)
+      new_dat <- apply(log_OR_matrix[, ], 2, sort)
 
       ranks_quantile <- ceiling(stats::quantile(rank_max, 1 - alpha))
 
@@ -425,7 +425,7 @@ PowerBayesianGeneral <- function(sample_size = 500,
       rank_max <- apply(rank_matrix, 1, max)
 
 
-      new_dat <- apply(log_OR_matrix[rank_max, ], 2, sort)
+      new_dat <- apply(log_OR_matrix[, ], 2, sort)
 
       ranks_quantile <- ceiling(stats::quantile(rank_max, 1 - alpha))
 
