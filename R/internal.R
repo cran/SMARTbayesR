@@ -166,7 +166,7 @@ MCBUpperLimitsDesign1 <- function(thetadraws,alpha = 0.05) {
   Log_OR_matrix <- thetadraws_log_odds - matrix(thetadraws_log_odds[, max_odds_ind], nrow = nrow(thetadraws), ncol = 4)
 
   # Rank log-OR
-  rank_matrix <- apply(Log_OR_matrix, 2, rank, ties.method = "min")
+  rank_matrix <- apply(Log_OR_matrix, 2, rank, ties.method = "random")
 
   # Find max rank
   rank_max <- apply(rank_matrix, 1, max)
@@ -204,7 +204,7 @@ MCBUpperLimitsGeneral <- function(thetadraws, alpha = 0.05) {
   Log_OR_matrix <- thetadraws_log_odds - matrix(thetadraws_log_odds[, max_odds_ind], nrow = nrow(thetadraws), ncol = 8)
 
   # Rank log-OR
-  rank_matrix <- apply(Log_OR_matrix, 2, rank, ties.method = "min")
+  rank_matrix <- apply(Log_OR_matrix, 2, rank, ties.method = "random")
 
   # Find max rank
   rank_max <- apply(rank_matrix, 1, max)
@@ -311,7 +311,7 @@ PowerBayesianDesign1 <- function(sample_size = 100,
       log_OR_matrix <- thetadraws_log_odds - matrix(thetadraws_log_odds[, max_odds_ind], nrow = 1000, ncol = 4)
 
 
-      rank_matrix <- apply(log_OR_matrix, 2, rank, ties.method = "min")
+      rank_matrix <- apply(log_OR_matrix, 2, rank, ties.method = "random")
 
       rank_max <- apply(rank_matrix, 1, max)
 
@@ -420,7 +420,7 @@ PowerBayesianGeneral <- function(sample_size = 500,
       log_OR_matrix <- thetadraws_log_odds - matrix(thetadraws_log_odds[, max_odds_ind], nrow = 1000, ncol = 8)
 
 
-      rank_matrix <- apply(log_OR_matrix, 2, rank, ties.method = "min")
+      rank_matrix <- apply(log_OR_matrix, 2, rank, ties.method = "random")
 
       rank_max <- apply(rank_matrix, 1, max)
 
