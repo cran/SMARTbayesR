@@ -28,7 +28,6 @@ end of stage-1 response indicator s, and final outcome y.
 This function simulates a SMART with Design 1.
 }
 \examples{
-
 dat <- SimDesign1(sample_size=250,
                              response_prob = c(0.5,0.9,0.3,0.7,0.5,0.8),
                              stage_one_trt_one_response_prob = 0.7,

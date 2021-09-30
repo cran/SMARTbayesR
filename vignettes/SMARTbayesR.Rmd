@@ -1,0 +1,252 @@
+---
+title: "SMARTbayesR"
+author: "William J Artman"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SMARTBayesR}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SMARTbayesR)
+```
+
+# Summary
+
+This R package provides functions for power analysis and the construction of the set of best embedded dynamic treatment regimes (EDTR) using Bayesian multiple comparison with the best (MCB) methodology. This entails the construction of simultaneous one-sided upper credible intervals for the difference between each EDTR's summary statistic and the best EDTRs. It is designed for binary outcomes in sequential, multiple assignment, randomized trials.
+
+We extend frequentist methods to the Bayesian setting. In particular, one may determine what sample size to enroll in order to achieve a specified power, where power is the probability of excluding inferior embedded dynamic treatment regimes from the set of best. 
+
+The set of best consists of EDTRs which are not significantly inferior to the optimal or best embedded dynamic treatment regime (Artman et al. 2020). 
+
+The best EDTR is included in the set of best with probability at least $1-\alpha$.
+
+In this vignette, we outline how the functions may be used together to achieve these goals.
+
+
+# Workflow: analysis
+
+First, run $\texttt{SimDesign1}$ to simulate a design-1 SMART. 
+
+Then, apply $\texttt{PosteriorTrtSeqProb}$ to sample from the posterior of the probabilities of response at each stage.
+
+To obtain draws from the probabilities of response for each of the embedded dynamic treatment regimes (EDTRs), run $\texttt{PosteriorEDTRProbs}$. 
+
+In order to construct the set of best (or equivalently, upper credible interval limits), run $\texttt{MCBUpperLimits}$. 
+
+# Simulated data analysis
+
+```{r}
+set.seed(23856)
+dat <- SimDesign1(sample_size = 250,
+           response_prob = c(0.2,0.3,0.4,0.5,0.6,0.7),
+           stage_one_trt_one_response_prob = 0.7,
+           stage_one_trt_two_response_prob = 0.4)
+```
+
+
+```{r}
+set.seed(39864)
+
+posterior_trt_seq_draws <- PosteriorTrtSeqProb(niter = 10000,
+                    dat,
+                    design = "design-1")
+
+```
+
+
+Convert draws from each treatment sequence to draws from each embedded DTR.
+```{r}
+posterior_EDTR_draws <- PosteriorEDTRProbs(posterior_trt_seq_draws)
+```
+
+
+```{r}
+MCBUpperLimits(thetadraws=posterior_EDTR_draws,
+               alpha=0.05,
+               design="design-1",
+               type="log-OR")
+```
+
+Note that EDTRs 1 and 2 are statistically significantly inferior to EDTR 4 whereas EDTR 3 is not.
+
+
+# Power analysis
+
+To see what the log-odds ratios are, run $\texttt{LogOR}$. Lastly, to compute the power to exclude inferior embedded dynamic treatment regimes (EDTRs) from the set of best (or equivalently, for their upper credible interval to exclude 0), run $\texttt{PowerBayesian}$. 
+
+
+Compute log-OR of a success.
+
+```{r}
+LogOR(response_prob = c(0.3,0.3,0.3,0.8,0.6,0.7),
+      stage_one_trt_one_response_prob = 0.6,
+      stage_one_trt_two_response_prob = 0.4,
+      design = "design-1")
+```
+
+
+Compute power to exclude embedded dynamic treatment regimes 1 and 2. The choice to exclude these embedded dynamic treatment regimes may be based off the values of the log-OR between each EDTR and the best.
+
+```{r, results="hide"}
+set.seed(2364)
+power1 <- PowerBayesian("design-1",
+              sample_size = 100,
+              response_prob = c(0.2,0.3,0.4,0.5,0.6,0.7),
+              stage_one_trt_one_response_prob = 0.6,
+              stage_one_trt_two_response_prob = 0.4,
+              type="log-OR",
+              threshold=1)
+```
+
+```{r}
+power1
+```
+
+# Relative risk
+
+To see what the log-relative-risk are, run $\texttt{LogRR}$. Lastly, to compute the power to exclude inferior embedded dynamic treatment regimes (EDTRs) from the set of best (or equivalently, for their upper credible interval to exclude 0), run $\texttt{PowerBayesian}$. 
+
+
+Compute log-RR of a success.
+
+
+```{r}
+LogRR(response_prob = c(0.3,0.3,0.3,0.8,0.6,0.7),
+      stage_one_trt_one_response_prob = 0.6,
+      stage_one_trt_two_response_prob = 0.4,
+      design = "design-1")
+```
+
+
+Compute power to exclude embedded dynamic treatment regimes 1 and 2. The choice to exclude these embedded dynamic treatment regimes may be based off the values of the log-RR between each EDTR and the best.
+
+```{r, results="hide"}
+set.seed(23641)
+power2 <- PowerBayesian("design-1",
+              sample_size = 100,
+              response_prob = c(0.2,0.3,0.4,0.5,0.6,0.7),
+              stage_one_trt_one_response_prob = 0.6,
+              stage_one_trt_two_response_prob = 0.4,
+              type="log-RR",
+              threshold=0.8)
+```
+
+
+```{r}
+power2
+```
+
+# Risk difference
+
+To see what the risk difference are, run $\texttt{RD}$. Lastly, to compute the power to exclude inferior embedded dynamic treatment regimes (EDTRs) from the set of best (or equivalently, for their upper credible interval to exclude 0), run $\texttt{PowerBayesian}$. 
+
+
+Compute RD of a success.
+
+
+```{r}
+RD(response_prob = c(0.3,0.3,0.3,0.8,0.6,0.7),
+      stage_one_trt_one_response_prob = 0.6,
+      stage_one_trt_two_response_prob = 0.4,
+      design = "design-1")
+```
+
+
+Compute power to exclude embedded dynamic treatment regimes 1 and 2. The choice to exclude these embedded dynamic treatment regimes may be based off the values of the log-RR between each EDTR and the best.
+
+```{r, results="hide"}
+set.seed(236412)
+power3 <- PowerBayesian("design-1",
+              sample_size = 100,
+              response_prob = c(0.2,0.3,0.4,0.5,0.6,0.7),
+              stage_one_trt_one_response_prob = 0.6,
+              stage_one_trt_two_response_prob = 0.4,
+              type="RD",
+              threshold=0.3)
+```
+
+```{r}
+power3
+```
+
+#General SMART
+To see what the log-odds ratios are, run $\texttt{LogOR}$. Lastly, to compute the power to exclude inferior embedded dynamic treatment regimes (EDTRs) from the set of best (or equivalently, for their upper credible interval to exclude 0), run $\texttt{PowerBayesian}$. 
+
+
+Compute log-OR of a success.
+
+```{r}
+LogOR(response_prob = c(0.2,0.3,0.4,0.5,0.6,0.7,0.7,0.6),
+      stage_one_trt_one_response_prob = 0.6,
+      stage_one_trt_two_response_prob = 0.4,
+      design = "general")
+```
+
+
+Compute power to exclude embedded dynamic treatment regimes 1, 2, 3, 4. The choice to exclude these embedded dynamic treatment regimes may be based off the values of the log-OR between each EDTR and the best.
+
+```{r, results="hide"}
+set.seed(23644)
+power4 <- PowerBayesian("general",
+              sample_size = 250,
+              response_prob = c(0.2,0.3,0.4,0.5,0.6,0.7,0.7,0.6),
+              stage_one_trt_one_response_prob = 0.6,
+              stage_one_trt_two_response_prob = 0.4,
+              type="log-OR",
+              threshold=1)
+```
+
+```{r}
+power4
+```
+
+# Design-3 SMART
+
+To see what the log-odds ratios are, run $\texttt{LogOR}$. Lastly, to compute the power to exclude inferior embedded dynamic treatment regimes (EDTRs) from the set of best (or equivalently, for their upper credible interval to exclude 0), run $\texttt{PowerBayesian}$. 
+
+
+Compute log-OR of a success.
+
+
+
+
+```{r}
+LogOR(response_prob = c(0.2,0.3,0.4,0.5,0.6,0.7,0.7,0.6,0.9),
+      stage_one_trt_one_response_prob = 0.6,
+      stage_one_trt_two_response_prob = 0.4,
+      stage_one_trt_three_response_prob = 0.7,
+      design = "design-3")
+```
+
+
+Compute power to exclude embedded dynamic treatment regimes 1, 2, and 3. The choice to exclude these embedded dynamic treatment regimes may be based off the values of the log-OR between each EDTR and the best.
+
+```{r, results="hide"}
+set.seed(236445)
+power5 <- PowerBayesian("design-3",
+              sample_size = 250,
+              response_prob = c(0.2,0.3,0.4,0.5,0.6,0.7,0.7,0.6,0.9),
+              stage_one_trt_one_response_prob = 0.6,
+              stage_one_trt_two_response_prob = 0.4,
+              stage_one_trt_three_response_prob = 0.7,
+              type="log-OR",
+              threshold=0.8)
+```
+
+```{r}
+power5
+```
+
+# References
+
+Artman, W. J., Ertefaie, A., Lynch, K. G., & McKay, J. R. (2020). Bayesian Set of Best Dynamic Treatment Regimes and Sample Size Determination for SMARTs with Binary Outcomes. arXiv preprint arXiv:2008.02341.

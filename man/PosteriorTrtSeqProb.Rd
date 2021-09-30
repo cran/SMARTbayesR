@@ -2,7 +2,7 @@
 % Please edit documentation in R/PosteriorTrtSeqProb.R
 \name{PosteriorTrtSeqProb}
 \alias{PosteriorTrtSeqProb}
-\title{Treatment Sequence Response Probabilties from Dataset}
+\title{Treatment Sequence Response Probabilities from Dataset}
 \usage{
 PosteriorTrtSeqProb(niter, dat, design = "design-1")
 }
@@ -11,7 +11,7 @@ PosteriorTrtSeqProb(niter, dat, design = "design-1")
 
 \item{dat}{a data frame (see Details).}
 
-\item{design}{an indicator of which SMART design, design-1 or general.}
+\item{design}{an indicator of which SMART design, design-1, general, or design-3.}
 }
 \value{
 Posterior draws of the probability of response at the end of the study for each embedded treatment sequence and
@@ -27,27 +27,23 @@ y, the end of study binary response indicator
 
 a1, the stage-1 treatment assignment indicator
 
-
 s, the end of stage-1 binary response indicator
 
-Additionally, for design-1 it should contain
+Additionally, for design-1 and design-3 it should contain
 a2, the stage-2 treatment assignment indicator
 
 For the general design, it should contain
-
 
 a2r, stage-2 treatment assignment for responders to stage-1 treatment.
 
 a2nr, stage-2 treatment assignment for non-responders to stage-1 treatment.
 }
 \examples{
-
 dat <- SimDesign1(sample_size=250,
                               response_prob = c(0.5,0.9,0.3,0.7,0.5,0.8),
                               stage_one_trt_one_response_prob = 0.7,
                               stage_one_trt_two_response_prob = 0.4)
 
 PosteriorTrtSeqProb(niter = 1000, dat, design = "design-1")
-
 
 }

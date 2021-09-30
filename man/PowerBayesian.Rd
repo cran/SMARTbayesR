@@ -2,7 +2,7 @@
 % Please edit documentation in R/PowerBayesian.R
 \name{PowerBayesian}
 \alias{PowerBayesian}
-\title{Power Computation when Planning a SMART}
+\title{Power Calculation for a SMART with a Binary Outcome}
 \usage{
 PowerBayesian(
   design = "design-1",
@@ -10,34 +10,39 @@ PowerBayesian(
   response_prob = c(0.5, 0.9, 0.3, 0.7, 0.5, 0.8),
   stage_one_trt_one_response_prob = 0.7,
   stage_one_trt_two_response_prob = 0.5,
-  rejection_indices = 2:3,
+  stage_one_trt_three_response_prob = 0.4,
+  type = "log-OR",
+  threshold,
   alpha = 0.05
 )
 }
 \arguments{
-\item{design}{specifies for which SMART design to calculate the power: design-1 or general.}
+\item{design}{specifies for which SMART design to calculate the power: design-1, general, or design-3.}
 
 \item{sample_size}{the total SMART study sample size.}
 
 \item{response_prob}{a vector of probabilities of response for each of embedded treatment sequences.
-In the case of design 1, there are 6 and for general design there are 8.}
+In the case of design 1, there are 6, for general design there are 8, and for design-3 there are 9}
 
-\item{stage_one_trt_one_response_prob}{the probability of response to stage-1 treatment for first initial treatment.}
+\item{stage_one_trt_one_response_prob}{the probability of response to stage-1 treatment for first stage-1 treatment.}
 
-\item{stage_one_trt_two_response_prob}{the probability of response to stage-1 treatment for second initial treatment.}
+\item{stage_one_trt_two_response_prob}{the probability of response to stage-1 treatment for second stage-1 treatment.}
 
-\item{rejection_indices}{a vector of indices of which embedded dynamic treatment regimes to exclude in power calculation.}
+\item{stage_one_trt_three_response_prob}{the probability of response to stage-1 treatment for third stage-1 treatment (for design-3 only).}
 
-\item{alpha}{type I error rate (probability of excluding optimal embedded dynamic treatment regime)}
+\item{type}{specifies log-OR, RD or log-RR.}
+
+\item{threshold}{minimum detectable difference between each EDTR and the best}
+
+\item{alpha}{probability of excluding optimal embedded dynamic treatment regime}
 }
 \value{
-The power to exclude embedded dynamic treatment regimes specified by rejection_indices from the set of best.
+The power to exclude embedded dynamic treatment regimes bigger than threshold from the set of best.
 }
 \description{
-This function computes the power for a sequential multiple assignment randomized trial (SMART) of one of two designs: "design-1" or "general".
+This function computes the power for a sequential multiple assignment randomized trial (SMART) of one of three designs: "design-1" or "general" or "design-3".
 }
 \examples{
-
 \donttest{
 PowerBayesian(
   design = "design-1",
@@ -45,7 +50,8 @@ PowerBayesian(
   response_prob = c(0.5, 0.9, 0.3, 0.7, 0.5, 0.8),
   stage_one_trt_one_response_prob = 0.7,
   stage_one_trt_two_response_prob = 0.5,
-  rejection_indices = 1:2
+  type="log-OR",
+  threshold=0.2
 )
 
 PowerBayesian(
@@ -54,7 +60,8 @@ PowerBayesian(
   response_prob = c(0.5, 0.9, 0.7, 0.2, 0.3, 0.8, 0.4, 0.7),
   stage_one_trt_one_response_prob = 0.7,
   stage_one_trt_two_response_prob = 0.5,
-  rejection_indices = c(1, 2, 4, 5, 6)
+  type="log-OR",
+  threshold=0.2
 )
 }
 }

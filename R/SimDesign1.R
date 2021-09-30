@@ -12,7 +12,6 @@
 #'
 #'
 #' @examples
-#'
 #' dat <- SimDesign1(sample_size=250,
 #'                              response_prob = c(0.5,0.9,0.3,0.7,0.5,0.8),
 #'                              stage_one_trt_one_response_prob = 0.7,
@@ -24,11 +23,19 @@ SimDesign1 <-
   function(sample_size=250,
            response_prob=c(0.5,0.5,0.5,0.8,0.7,0.5),
            stage_one_trt_one_response_prob = 0.7,
-           stage_one_trt_two_response_prob = 0.4){
+           stage_one_trt_two_response_prob = 0.4) {
 
+    if (any(response_prob <0|response_prob>1)) {
+      stop("Treatment sequence response probabilities must be between 0 and 1")
+    }
+    
+    if (stage_one_trt_one_response_prob<0|stage_one_trt_one_response_prob>1|stage_one_trt_two_response_prob<0|stage_one_trt_two_response_prob>1) {
+      stop("Stage-1 treatment response probabilities must be between 0 and 1")
+    }
 
-
-
+    if (sample_size <= 0 | sample_size != round(sample_size)) {
+      stop("Sample size n must be a positive integer")
+    }
 
     a1 <- 2*stats::rbinom(sample_size,1,.5)-1 #First stage treatment indicator: coded as -1 and +1
 
